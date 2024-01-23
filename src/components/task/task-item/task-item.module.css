@@ -1,0 +1,14 @@
+.item {
+  list-style: none;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  border: 2px solid black;
+  text-align: center;
+  background-color: white;
+}
+.item:hover {
+  cursor: grab;
+}
+.item:active {
+  cursor: grabbing;
+}
