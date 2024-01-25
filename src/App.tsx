@@ -16,7 +16,7 @@ const initialTaskState: TaskStateType = {
   Done: [{ title: 'Task3', id: nanoid() }],
 }
 
-function App() {
+export const App = () => {
   const [taskState, setTaskState] = useState<TaskStateType>(initialTaskState)
 
   const handleDragEnd = (e: DragEndEvent) => {
@@ -95,5 +95,3 @@ function App() {
     </DndContext>
   )
 }
-
-export default App
