@@ -1,13 +1,10 @@
 import { useSortable } from '@dnd-kit/sortable'
 import styles from './task-item.module.css'
 import { CSS } from '@dnd-kit/utilities'
+import { TaskItemType } from '../../../types'
 
-interface Props {
-  title: string
-}
-
-export const TaskItem = ({ title }: Props) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: title })
+export const TaskItem = ({ title, id }: TaskItemType) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
 
   return (
     <li

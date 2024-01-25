@@ -3,17 +3,21 @@ import { useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
 import styles from './app.module.css'
 import { TaskList } from './components/task/task-list/task-list'
+import { TaskItemType } from './types'
+import { nanoid } from 'nanoid'
 
-interface ITaskList {
-  [key: string]: string[]
+interface TaskStateType {
+  [key: string]: TaskItemType[]
+}
+
+const initialTaskState: TaskStateType = {
+  Planned: [{ title: 'Task1', id: nanoid() }],
+  Processed: [{ title: 'Task2', id: nanoid() }],
+  Done: [{ title: 'Task3', id: nanoid() }],
 }
 
 function App() {
-  const [taskList, setTaskList] = useState<ITaskList>({
-    Planned: ['Task1', 'Task2', 'Task3'],
-    Processed: ['Task4'],
-    Done: ['Task5', 'Task6']
-  })
+  const [taskState, setTaskState] = useState<TaskStateType>(initialTaskState)
 
   const handleDragEnd = (e: DragEndEvent) => {
     if (!e.over || !e.active.data.current || !e.over.data.current) return
@@ -25,11 +29,11 @@ function App() {
 
     const containerName = e.active.data.current.sortable.containerId
 
-    setTaskList((taskList) => {
-      const temp = { ...taskList }
+    setTaskState((taskState) => {
+      const temp = { ...taskState }
       if (!e.over) return temp
-      const oldIdx = temp[containerName].indexOf(e.active.id.toString())
-      const newIdx = temp[containerName].indexOf(e.over.id.toString())
+      const oldIdx = temp[containerName].findIndex((task) => task.id === e.active.id.toString())
+      const newIdx = temp[containerName].findIndex((task) => task.id === e.over!.id.toString())
       temp[containerName] = arrayMove(temp[containerName], oldIdx, newIdx)
       return temp
     })
@@ -43,33 +47,35 @@ function App() {
 
     if (!initialContainer) return
 
-    setTaskList((taskList) => {
-      const temp = { ...taskList }
+    setTaskState((taskState) => {
+      const temp = { ...taskState }
+      const targetTask = temp[initialContainer].find((task) => task.id === e.active.id.toString())
+      if (!targetTask) return temp
 
       if (!targetContainer) {
-        if (taskList[e.over!.id].includes(e.active.id.toString())) return temp
+        if (taskState[e.over!.id].some((task) => task.id === e.active.id.toString())) return temp
 
-        temp[initialContainer] = temp[initialContainer].filter(
-          (task) => task !== e.active.id.toString()
-        )
+        temp[initialContainer] = temp[initialContainer].filter((task) => task.id !== targetTask?.id)
 
-        temp[e.over!.id].push(e.active.id.toString())
+        temp[e.over!.id].push(targetTask)
 
         return temp
       }
 
       if (initialContainer === targetContainer) {
-        const oldIdx = temp[initialContainer].indexOf(e.active.id.toString())
-        const newIdx = temp[initialContainer].indexOf(e.over!.id.toString())
+        const oldIdx = temp[initialContainer].findIndex(
+          (task) => task.id === e.active.id.toString()
+        )
+        const newIdx = temp[initialContainer].findIndex((task) => task.id === e.over!.id.toString())
 
         temp[initialContainer] = arrayMove(temp[initialContainer], oldIdx, newIdx)
       } else {
         temp[initialContainer] = temp[initialContainer].filter(
-          (task) => task !== e.active.id.toString()
+          (task) => task.id !== e.active.id.toString()
         )
 
-        const newIdx = temp[targetContainer].indexOf(e.over!.id.toString())
-        temp[targetContainer].splice(newIdx, 0, e.active.id.toString())
+        const newIdx = temp[targetContainer].findIndex((task) => task.id === e.over!.id.toString())
+        temp[targetContainer].splice(newIdx, 0, targetTask)
       }
 
       return temp
@@ -81,8 +87,8 @@ function App() {
       <main className={styles.main}>
         <h1>Multi Sortable List</h1>
         <section className={styles.container}>
-          {Object.keys(taskList).map((key) => (
-            <TaskList key={key} title={key} tasks={taskList[key]} />
+          {Object.keys(taskState).map((key) => (
+            <TaskList key={key} title={key} tasks={taskState[key]} />
           ))}
         </section>
       </main>
