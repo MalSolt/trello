@@ -1,10 +1,10 @@
-import { DndContext, DragEndEvent, DragOverEvent } from '@dnd-kit/core'
+import { DndContext, DragOverEvent } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
-import { useState } from 'react'
-import styles from './app.module.css'
 import { TaskList } from 'components/task/task-list/task-list'
 import { nanoid } from 'nanoid'
+import { useState } from 'react'
 import { TaskItemType } from 'types'
+import styles from './app.module.css'
 
 interface TaskStateType {
   [key: string]: TaskItemType[]
@@ -13,37 +13,21 @@ interface TaskStateType {
 const initialTaskState: TaskStateType = {
   Planned: [{ title: 'Task1', id: nanoid() }],
   Processed: [{ title: 'Task2', id: nanoid() }],
-  Done: [{ title: 'Task3', id: nanoid() }],
+  Done: [
+    { title: 'Task3', id: nanoid() },
+    { title: 'Task4', id: nanoid() },
+  ],
 }
 
 export const App = () => {
   const [taskState, setTaskState] = useState<TaskStateType>(initialTaskState)
-
-  const handleDragEnd = (e: DragEndEvent) => {
-    if (!e.over || !e.active.data.current || !e.over.data.current) return
-
-    if (e.active.id === e.over.id) return
-
-    if (e.active.data.current.sortable.containerId !== e.over.data.current.sortable.containerId)
-      return
-
-    const containerName = e.active.data.current.sortable.containerId
-
-    setTaskState((taskState) => {
-      const temp = { ...taskState }
-      if (!e.over) return temp
-      const oldIdx = temp[containerName].findIndex((task) => task.id === e.active.id.toString())
-      const newIdx = temp[containerName].findIndex((task) => task.id === e.over!.id.toString())
-      temp[containerName] = arrayMove(temp[containerName], oldIdx, newIdx)
-      return temp
-    })
-  }
 
   const handleDragOver = (e: DragOverEvent) => {
     if (!e.over) return
 
     const initialContainer = e.active.data.current?.sortable?.containerId
     const targetContainer = e.over.data.current?.sortable?.containerId
+
 
     if (!initialContainer) return
 
@@ -83,7 +67,7 @@ export const App = () => {
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd} onDragOver={handleDragOver}>
+    <DndContext onDragOver={handleDragOver}>
       <main className={styles.main}>
         <h1>Multi Sortable List</h1>
         <section className={styles.container}>
