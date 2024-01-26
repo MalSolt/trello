@@ -28,7 +28,6 @@ export const App = () => {
     const initialContainer = e.active.data.current?.sortable?.containerId
     const targetContainer = e.over.data.current?.sortable?.containerId
 
-
     if (!initialContainer) return
 
     setTaskState((taskState) => {
