@@ -2,7 +2,7 @@ import { SortableContext } from '@dnd-kit/sortable'
 import { useDroppable } from '@dnd-kit/core'
 import { TaskItem } from '..'
 import styles from './task-list.module.css'
-import { TaskListType } from '../../../types'
+import { TaskListType } from 'types'
 
 export const TaskList = ({ title, tasks }: TaskListType) => {
   const { setNodeRef } = useDroppable({ id: title })

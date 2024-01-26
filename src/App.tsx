@@ -1,10 +1,10 @@
 import { DndContext, DragEndEvent, DragOverEvent } from '@dnd-kit/core'
-import { useState } from 'react'
 import { arrayMove } from '@dnd-kit/sortable'
+import { useState } from 'react'
 import styles from './app.module.css'
-import { TaskList } from './components/task/task-list/task-list'
-import { TaskItemType } from './types'
+import { TaskList } from 'components/task/task-list/task-list'
 import { nanoid } from 'nanoid'
+import { TaskItemType } from 'types'
 
 interface TaskStateType {
   [key: string]: TaskItemType[]
