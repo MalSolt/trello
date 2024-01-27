@@ -5,9 +5,6 @@ import { TaskItemType } from 'types'
 
 export const TaskItem = ({ title, id }: TaskItemType) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
-  if (transform) {
-    console.log(transform.x, transform.y)
-  }
 
   return (
     <li

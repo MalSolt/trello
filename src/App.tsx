@@ -20,45 +20,35 @@ const initialTaskState: TaskStateType = {
 }
 
 export const App = () => {
-  const [taskState, setTaskState] = useState<TaskStateType>(initialTaskState)
+  const [taskState, setTaskState] = useState(initialTaskState)
 
   const handleDragOver = (e: DragOverEvent) => {
     if (!e.over) return
 
     const initialContainer = e.active.data.current?.sortable?.containerId
     const targetContainer = e.over.data.current?.sortable?.containerId
-
-    if (!initialContainer) return
+    const activeId = e.active.id
+    const overId = e.over.id
 
     setTaskState((taskState) => {
       const temp = { ...taskState }
-      const targetTask = temp[initialContainer].find((task) => task.id === e.active.id.toString())
-      if (!targetTask) return temp
+      const avtiveTask = temp[initialContainer].find((task) => task.id === activeId)!
 
       if (!targetContainer) {
-        if (taskState[e.over!.id].some((task) => task.id === e.active.id.toString())) return temp
-
-        temp[initialContainer] = temp[initialContainer].filter((task) => task.id !== targetTask?.id)
-
-        temp[e.over!.id].push(targetTask)
-
+        if (taskState[overId].some((task) => task.id === activeId)) return temp
+        temp[initialContainer] = temp[initialContainer].filter((task) => task.id !== activeId)
+        temp[overId].push(avtiveTask)
         return temp
       }
 
-      if (initialContainer === targetContainer) {
-        const oldIdx = temp[initialContainer].findIndex(
-          (task) => task.id === e.active.id.toString()
-        )
-        const newIdx = temp[initialContainer].findIndex((task) => task.id === e.over!.id.toString())
+      const newIdx = temp[targetContainer].findIndex((task) => task.id === overId)
 
+      if (initialContainer === targetContainer) {
+        const oldIdx = temp[targetContainer].findIndex((task) => task.id === activeId)
         temp[initialContainer] = arrayMove(temp[initialContainer], oldIdx, newIdx)
       } else {
-        temp[initialContainer] = temp[initialContainer].filter(
-          (task) => task.id !== e.active.id.toString()
-        )
-
-        const newIdx = temp[targetContainer].findIndex((task) => task.id === e.over!.id.toString())
-        temp[targetContainer].splice(newIdx, 0, targetTask)
+        temp[initialContainer] = temp[initialContainer].filter((task) => task.id !== activeId)
+        temp[targetContainer].splice(newIdx, 0, avtiveTask)
       }
 
       return temp
