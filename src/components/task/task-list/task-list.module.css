@@ -7,6 +7,7 @@
   min-height: 100%;
   width: 30%;
   gap: 1rem;
+  background-color: #e2ffe5;
 }
 .column > h1 {
   font-size: 2rem;
